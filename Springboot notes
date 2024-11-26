@@ -1,1 +1,116 @@
+-----------What is Spring Boot?-------------
 
+Spring Boot is a framework designed to simplify the development of Java-based enterprise applications, particularly web and microservices applications. It is built on top of the Spring Framework and provides a streamlined approach to application development by reducing boilerplate configuration and enabling a faster, easier setup process.
+------------------Inversion of Control(IoC) and Dependency Injection--------------------------
+Inversion of Control (IoC) is a programming principle where the control of object creation and the flow of an application is transferred from the developer to a framework or container. It is one of the foundational concepts of the Spring Framework.It is the principle and the implemantation is using DI.
+**in springboot we have many layers like controller ,service ,repository etc..
+**In order to access the services from controller , we have to create controller class and then create an object of Service class to use some features of Service .
+**If sevice want to work with repo ,imagine there is a service class and we have to create object of repository to use it.
+**If we have 1000s of such classes in a project then its not that easy to create objects out of it.For making it easy there comes Inversion of Control(normally we have the control to create objects now we are giving the control to someone else.hence called inversion of control).
+**DEPENDENCY INJECTION:Dependency Injection (DI) is a design pattern that allows a class to receive its dependencies from an external source, rather than creating them itself. It is a fundamental concept in frameworks like Spring, enabling the implementation of Inversion of Control (IoC).
+**Now when a class need an object we dont have to create new object using new keyword rather ask spring to inject object into the application .
+**Types of dependency injection
+1. constructor injection
+2.setterv injection
+3.field injection
+
+----------------springboot---------------
+**suppose we want 100s of classes,spring is ready to make objects for all these .But in some cases we may not need objects for all the classes.Then we tell spring through configurations to create objects for these these classes.
+
+------------tomcat server----------------
+**when building an application in order to run it we need a tomcat server.In our machine even before running the code we need to install and configure tomcat.
+**Springboot takes care of all the configuration problems of building a project in less time.To make app creation easy use springboot.
+**Springboot has tomcat embedded in it.
+STEPS OF CREATING SPRINGBOOT PROJECT
+**spring initializer
+**project-maven
+**language-java
+**springboot- 3.2.5
+**packaging-jar
+**java-21
+**dependencies
+spring web-if we are creating web applications
+spring jpa-fdb connectivity
+**generate 
+**unzip 
+
+Avoid SNAPSHOT versions for production:
+    SNAPSHOT versions are not stable releases. They are often used for testing upcoming features and may contain bugs.
+
+Choose the latest stable release for new projects.
+    Example: If the latest release is 3.4.0, use it. It includes all the latest features, enhancements, and bug fixes.
+
+*****printing hello world 
+package com.example.demo;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class Helloworld {
+    @RequestMapping
+    public String show()
+    {
+        return "Hello World";
+    }
+}
+while running this we can see tomcat running on port .on that we can see Hello world
+
+--------------Dependency injection using spring boot-----------
+
+*When we need to have objects for specific classes then inside jvm there is ioc or spring container.Inside spring container these objects are created.
+*So when we need to run the application first thing we need is the container.
+* SpringApplication.run(ProjectApplication.class, args);   create container
+*IoC container is an object and it is of the type ApplicationContext.So object of ApplicationContext need to be made.
+*Already the SpringApplication.run returns Application context.So assigning it directly.
+ ApplicationContext context = SpringApplication.run(ProjectApplication.class, args);
+
+eg:
+Application
+
+package com.project1.project;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class ProjectApplication {
+
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(ProjectApplication.class, args);
+        Dev obj=context.getBean(Dev.class);         //getbean is used to get the object created from context..//Dev.class means which class's object is to be created
+		obj.build();
+	}
+
+}
+
+Dev.java
+
+package com.project1.project;
+
+import org.springframework.stereotype.Component;
+
+@Component    //write component above the classes to let java know object creation of which all classes are to be handled
+public class Dev {
+    public void build()
+    {
+        System.out.println("working on an project");
+    }
+}
+
+-------------application.properties-------------
+to store configuration related info
+
+-------------APACHE MAVEN------------
+Apache Maven is a popular build automation and project management tool primarily used for Java projects. It simplifies the process of building, testing, and deploying applications by handling dependencies, project structure, and build lifecycle. Maven uses an XML configuration file (pom.xml) to define project details, dependencies, plugins, and other settings.
+*It helps programmmers manage their projects and all the things needed to build the projects.
+*There are differrent levels of dependencies (transitive dependency) required for a project....first the depedencies the project needs,then dependencies of the dependencies,then their dependencies and so on...first,second order..etc..
+*Maven takes care of all these dependencies.
+*Maven also helps in bulding and testing 
+*Maven has three phases
+1.Clean phase - The clean lifecycle handles project cleanup before the actual build process begins. It removes files and directories generated by previous builds.
+2.Default phase - where most useful goals are there...such as building and testing
+3.Site phase -where all the documentation are there
+*each phase has specific goals.
+*There is a life cycle which tells about the order of these goals.
