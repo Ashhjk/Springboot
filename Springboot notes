@@ -53,8 +53,9 @@ STEPS OF CREATING SPRINGBOOT PROJECT
 **packaging-jar
 **java-21
 **dependencies
-spring web-if we are creating web applications
-spring jpa-fdb connectivity
+      spring web------------if we are creating web applications
+      spring jpa------------fdb connectivity
+      springboot devtools  ------------  -automatic reload
 **generate 
 **unzip 
 
@@ -279,7 +280,7 @@ public class Dev {
         laptop.compile();
     }
 
-******************
+________________@PRIMARY_______________
 If we use Autowired to make connection directly to laptop its like harcoding. Suppose we have an interface called Computer and there are two classes Laptop and Desktop both extends computer . In such a case when both we create the connection to computer it can be Laptop or computer ..so there is a confusion to choose connection to either laptop or desktop as both of them have Component above it and both objects of laptop and desktop are created. In such case use @Primary with the class so that the connection is made with that class only.
 
 ----------Computer.interface------------
@@ -361,3 +362,78 @@ public class ProjectApplication {
 }
 
 
+_____________________@QUALIFIER______________________
+We can either use @Primary or use 
+@Qualifier("mention the class name with first letter small eg:laptop,desktop") in Dev class
+
+
+public class Dev {
+    @Autowired               //throws error because of confusion
+    @Qualifier("laptop")
+    private Computer comp;
+
+__________________TYPICAL WEB APP________________
+client                 =>frontend
+
+controller
+service            => backend
+repository
+
+database
+
+**the requests coming from the client side(react) has to be handled by the backend.... for this we use controller..say for eg: in order to handle the requests coming from the home page we can create a java class HomeController.
+**what all happening in the front end (adding to cart etc) everything is a request and everything has a url.
+**for each url there is corresponding method in the controller.
+**So for each url write it in slash using annotation @Requestmapping("/")
+
+_____________@RequestMapping____________
+
+******Homecontroller.java*******
+
+package com.Ashly.simpleWebApp;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Controller      //throws error
+public class HomeController {
+
+    @RequestMapping("/")    //url:localhost:8080/
+    public String greet()
+    {
+        return "Hi Ashly";
+    }
+}
+
+*************SimpleWebAppApplication************
+
+package com.Ashly.simpleWebApp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SimpleWebAppApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SimpleWebAppApplication.class, args);
+	}
+
+}
+
+________________________@RestController___________________________
+*****error is thrown because when we use the annotation @Controller then requestmapping will look the file named "Hi Ashly" to return.So use @RestController instead.
+REST= REPRESENTATIONAL STATE TRANSFER(RETURN DATA FROM SERVER TO CLIENT NOT LAYOUT)
+
+@RestController
+public class HomeController {
+
+******Another way is u can use @Controller itself but along with @RequestMapping use @ResponseBody to show that u are expecting the body as response
+
+@Controller
+public class HomeController {
+
+    @RequestMapping("/")
+    @ResponseBody
+    public String greet()
