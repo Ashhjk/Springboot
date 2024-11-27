@@ -235,7 +235,7 @@ public class ProjectApplication {
 Suppose there is a class Dev and it need a laptop to build or compile.So creating separate laptop class and inside laptop class there is a compile method.
 Class Dev require the object of laptop class. Using Autowired we can make connection between the laptop and the dev class automatically.
 
---------------FIELD INJECTION---------
+--------------FIELD INJECTION---------(not good)
 @Component
 public class Dev {
     @Autowired    //FIELD injection...directly injects the dependencies into variables
@@ -247,4 +247,117 @@ public class Dev {
     }
 
 }
+
+-------------CONSTRUCTOR INJECTION------------(not USING AUTOWIRED)
+@Component
+public class Dev {
+   
+    private Laptop laptop;
+    public Dev(Laptop laptop)
+    {
+        this.laptop=laptop;
+    }
+
+    public void build()
+    {
+        laptop.compile();
+    }
+
+----------------SETTER INJECTION-------------
+@Component
+public class Dev {
+   
+    private Laptop laptop;
+
+    @Autowired    //use autowired for setter injection and field injection
+    public void setLaptop(Laptop laptop) {
+        this.laptop = laptop;
+    }
+
+    public void build()
+    {
+        laptop.compile();
+    }
+
+******************
+If we use Autowired to make connection directly to laptop its like harcoding. Suppose we have an interface called Computer and there are two classes Laptop and Desktop both extends computer . In such a case when both we create the connection to computer it can be Laptop or computer ..so there is a confusion to choose connection to either laptop or desktop as both of them have Component above it and both objects of laptop and desktop are created. In such case use @Primary with the class so that the connection is made with that class only.
+
+----------Computer.interface------------
+package com.project1.project;
+
+public interface Computer {
+    public void compile();
+}
+
+-------------Laptop.java-----------
+package com.project1.project;
+
+import org.springframework.stereotype.Component;
+
+@Component        //object of laptop created
+public class Laptop implements Computer{
+    public void compile()
+    {
+        System.out.println("compiling....");
+    }
+}
+
+---------------Desktop.JAva------------
+
+package com.project1.project;
+
+import org.springframework.stereotype.Component;
+
+@Component //object of desktop created
+@Primary                //@Primary is used so the connection to Desktop is made
+public class Desktop implements Computer{
+    public void compile()
+    {
+        System.out.println("compiling....");
+    }
+}
+
+----------------Dev.java-------------
+
+package com.project1.project;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Dev {
+    @Autowired               //throws error because of confusion
+    private Computer comp;
+
+    public void setComp(Computer comp) {
+        this.comp = comp;
+    }
+
+
+
+    public void build()
+    {
+        comp.compile();
+    }
+
+}
+
+-------------------ProjectApplication.java-----------
+package com.project1.project;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class ProjectApplication {
+
+	public static void main(String[] args) {
+		ApplicationContext context = SpringApplication.run(ProjectApplication.class, args);
+        Dev obj=context.getBean(Dev.class);  //getbean is used to get the object created from context..//Dev.class means which class's object is to be created
+		obj.build();
+	}
+
+}
+
 
