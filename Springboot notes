@@ -2,6 +2,7 @@
 
 Spring Boot is a framework designed to simplify the development of Java-based enterprise applications, particularly web and microservices applications. It is built on top of the Spring Framework and provides a streamlined approach to application development by reducing boilerplate configuration and enabling a faster, easier setup process.
 spring framework vs springboot:- actually spring framework is flexible but we have to do a lot of configurations by ourself...but using springboot is much easier as it provide a lot of configurations
+
 ------------------Inversion of Control(IoC) and Dependency Injection--------------------------
 Inversion of Control (IoC) is a programming principle where the control of object creation and the flow of an application is transferred from the developer to a framework or container. It is one of the foundational concepts of the Spring Framework.It is the principle and the implemantation is using DI.
 **in springboot we have many layers like controller ,service ,repository etc..
@@ -16,7 +17,7 @@ Inversion of Control (IoC) is a programming principle where the control of objec
 2.setter injection
 3.field injection
 
-----------JAR File-----------
+------------JAR File-------------
 
     What is it? A file that holds Java programs and libraries.
     Think of it like: A box with tools or apps that you can use on your computer.
@@ -487,7 +488,7 @@ public class LoginController {
 _______________FRONT CONTROLLER___________
 Front controller knows requests should be mapped to which controllers
 
-5. Suppose we have productcontroller also. If it returns the data of products then there will be so many information such as prod id, price name etc. ...All these are stored in Product.java.When controller wants data ,then it does not ask data from databse,instead the data come from service.We cant hard code information into the controller layer.
+5. Suppose we have product controller also. If it returns the data of products then there will be so many information such as prod id, price name etc. ...All these are stored in Product.java.When controller wants data ,then it does not ask data from databse,instead the data come from service.We cant hard code information into the controller layer.
 
 Product.java       //model means it holds data
 
@@ -505,3 +506,31 @@ public class Product {
 }
 
 6. We can make 3 packages called Controller Service and Repository
+
+_______________CRUD OPERATIONS______________________(SimpleWeb application
+
+REST uses http protocol and it contains certain methods for Create Read Update Delete .They are GET,POST,PUT,DELETE.
+Using postman for get request we enter the api url:http://localhost:8080/products.If we wnter this url in google we will get the reponse .
+or using postman
+it gives the response as json.Shows the time taken in ms and also the amount of data send.
+
+7.*****To get a single product based on the id, we have to create one more method with request mapping with id.
+
+we create a method getproductById...then it should return :from the products a stream is created to filter the products.Then a filter based on for any product p which we get from the stream if the p.getproductId matches with the productId then reuturn findFirst().get() because there will be many products with the same id so return first one with matching id.
+
+http://localhost:8080/products/101
+returns data related to that product id
+
+8.*****************@Pathvariable 
+accepts the value from the path (url) say product id
+
+9.______________jackson library_______________
+spring web dependency provide jackson library which converts the java object that we give to json and vice versa
+10.*****while doing post operation we first go to controller then go to service.
+
+10______________________POST operation___________________
+
+while doing post operation we create the method in service to add the product and then go to the controller.The order changes.
+
+Service
+first we create the method  and then accept the Product  'public void addProduct(Product prod)'....then we have to save this product in the list 'products'
