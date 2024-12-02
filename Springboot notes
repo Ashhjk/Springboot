@@ -763,3 +763,4 @@ Steps:
 
 use annotation @Repository
 use interface which extends Jpa repository because we need to use JPA here in repo to make the query simple.
+Inside Jpa repository<tablename,datatype of primary key>
