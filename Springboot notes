@@ -521,6 +521,85 @@ we create a method getproductById...then it should return :from the products a s
 http://localhost:8080/products/101
 returns data related to that product id
 
+
+____PRODUCT CONTROLLER____
+
+package com.Ashly.simpleWebApp.controller;
+
+import com.Ashly.simpleWebApp.model.Product;
+import com.Ashly.simpleWebApp.Service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class ProductController {
+
+    @Autowired
+    ProductService service;
+
+    @RequestMapping("/products")
+    public List<Product> getProducts() {
+        return service.getProducts();
+    }
+
+    @RequestMapping("/products/{prodId}")
+    public Product getProductById(@PathVariable int prodId){
+        return service.getProductById(prodId);
+    }
+}
+
+_____PRODUCT(MODEL)______
+
+package com.Ashly.simpleWebApp.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
+public class Product {
+
+    private int prodId;
+    private String prodName;
+    private int price;
+}
+
+___________PRODUCT SERVICE________
+
+package com.Ashly.simpleWebApp.Service;
+
+
+import com.Ashly.simpleWebApp.model.Product;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    List<Product> products = Arrays.asList(new Product(101, "Iphone", 5000), new Product(102, "Canon Camera", 7000),new Product(103,"Shure Mic",1000));
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public Product getProductById(int prodId) {
+        return products.stream()
+                .filter(p -> p.getProdId() == prodId)
+                .findFirst().get();
+    }
+}
+
+
 8.*****************@Pathvariable 
 accepts the value from the path (url) say product id
 
@@ -534,3 +613,105 @@ while doing post operation we create the method in service to add the product an
 
 Service
 first we create the method  and then accept the Product  'public void addProduct(Product prod)'....then we have to save this product in the list 'products'
+product.add(prod);
+
+Controller
+In the controller we have to add a method to add product which return nothing so use void which adds the product prod so give prod as argument .
+
+  @RequestMapping("/products")
+    public void addProduct(Product prod)
+    {
+        service.addProduct(prod);
+    }
+
+If we give like this the request mapping for getting list of products is also same ..so there is confusion.Therefore use @Postmapping for post operation and
+@GetMapping for  get operation keeping the url same.
+We have to use 'new ArrayList' because otherwise list will be immutable and we cant add records in it.
+
+
+
+PRODUCT CONTROLLER
+
+package com.Ashly.simpleWebApp.controller;
+
+import com.Ashly.simpleWebApp.model.Product;
+import com.Ashly.simpleWebApp.Service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class ProductController {
+
+    @Autowired
+    ProductService service;
+
+    @GetMapping("/products")
+    public List<Product> getProducts() {
+        return service.getProducts();
+    }
+
+    @GetMapping("/products/{prodId}")
+    public Product getProductById(@PathVariable int prodId){
+        return service.getProductById(prodId);
+    }
+
+    @PostMapping("/products")
+    public void addProduct(@RequestBody Product prod)   //we have to use request body also because we are sending the  request from client to server
+    {
+        service.addProduct(prod);
+    }
+
+}
+
+PRODUCT SERVICE
+
+package com.Ashly.simpleWebApp.Service;
+
+
+import com.Ashly.simpleWebApp.model.Product;
+import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    List<Product> products =  new ArrayList<>(Arrays.asList(new Product(101, "Iphone", 5000), new Product(102, "Canon Camera", 7000),new Product(103,"Shure Mic",1000)));                                //we have to use new ArrayList because otherwise list will be immutable and we cant add records in it.
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public Product getProductById(int prodId) {
+        return products.stream()
+                .filter(p -> p.getProdId() == prodId)
+                .findFirst().get();
+    }
+    public void addProduct(Product prod)
+    {
+        products.add(prod);
+    }
+}
+
+
+_____________UPDATE_____________
+*********CONTROLLER******
+@PutMapping("/products")
+    public void updateProduct(@RequestBody Product prod)
+    {
+        service.updateProduct(prod);
+    }
+
+************SERVICE**********
+  public void updateProduct(Product prod) {
+        int index =0;
+        for (int i=0;i< products.size();i++)
+        {
+            if (products.get(i).getProdId()== prod.getProdId())    //need to match with the product id given in json
+                index=i;
+            products.set(index,prod);
+        }
+    }
