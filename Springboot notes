@@ -630,7 +630,7 @@ We have to use 'new ArrayList' because otherwise list will be immutable and we c
 
 
 
-PRODUCT CONTROLLER
+***********PRODUCT CONTROLLER*************
 
 package com.Ashly.simpleWebApp.controller;
 
@@ -665,7 +665,7 @@ public class ProductController {
 
 }
 
-PRODUCT SERVICE
+*********PRODUCT SERVICE*********
 
 package com.Ashly.simpleWebApp.Service;
 
@@ -697,7 +697,7 @@ public class ProductService {
 }
 
 
-_____________UPDATE_____________
+11. _____________UPDATE_____________
 *********CONTROLLER******
 @PutMapping("/products")
     public void updateProduct(@RequestBody Product prod)
@@ -715,3 +715,51 @@ _____________UPDATE_____________
             products.set(index,prod);
         }
     }
+
+12. _____________DELETE____________
+**********CONTROLLER************
+@DeleteMapping("/products/{prodId}")
+    public void deleteProduct(@PathVariable int prodId)   //here we are not passing any object ..here we are accepting the value so use pathvariable
+    {
+        service.deleteProduct(prodId);
+    }
+
+***************SERVICE************
+public void deleteProduct(int prodId) {
+        int index =0;
+        for (int i=0;i< products.size();i++)
+        {                                               //here we have the product id and in order to match it with any of the ids and then if matches giving it  to                                                            index and then deleting it
+            if (products.get(i).getProdId()== prodId)
+                index=i;
+            products.remove(index);
+        }
+    }
+
+13. _____________SPRING DATA JPA______________
+inside the service we actually code the logic ...but here we have hardcoded the data .So instead of hardcoding we can directly connect to the database.
+For that we use the repository layer.
+
+************JAVA DATABASE CONNECTIVITY(JDBC)************
+to connect java code with database.
+
+********OBJECT RELATIONAL MAPPING ********
+In java we represent everything using object.In relational db everything is relations.These objects have values say the object product have the values prod id,name , price etc...In database we have tables with table name coloumn name and records...We have to map these objects with relations.How will we get the details about these tables.
+Our table name is the entity class name Product.
+Variable name in the entity class is the coloumn name.(prodId,prodName,price)
+Objects are rows.
+****ORM TOOLS**** = Hibernate,Eclipselink,Mybatis
+All these tools have different standards.SO if we need to switch from one tool to another we have to chwnge a lot of code.
+
+*******JPA(JAVA PERSISTENCE API)************
+They are certain standards for orm mapping.Hibernate implements this.Similarly Eclipselink implements this in someother way etc...
+By using JPA it is easier to switch btw different standards.
+
+Steps:
+1.add dependencies in pom.xml
+2.add configuration in application.properties
+3.create repository package
+
+14. ___________REPOSITORY___________
+
+use annotation @Repository
+use interface which extends Jpa repository because we need to use JPA here in repo to make the query simple.
