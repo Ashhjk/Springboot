@@ -761,6 +761,138 @@ Steps:
 
 14. ___________REPOSITORY___________
 
+By using repository we can actually connect to a database.
 use annotation @Repository
 use interface which extends Jpa repository because we need to use JPA here in repo to make the query simple.
 Inside Jpa repository<tablename,datatype of primary key>
+
+
+*******APPLICATION.PROPERTIES*******
+
+spring.application.name=simpleWebApp
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/Shopping
+spring.datasource.username=postgres
+spring.datasource.password=Ashly@339
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.show-sql=true   //if we use this statement we can see the sql queries once we do some operation in postman.
+
+*********ProductRepository********
+package com.Ashly.simpleWebApp.Repository;
+
+import com.Ashly.simpleWebApp.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository<Product,Integer> {
+
+}       //rest all will be handled by spring JPA
+
+************Product service***********
+package com.Ashly.simpleWebApp.Service;
+
+
+import com.Ashly.simpleWebApp.Repository.ProductRepository;
+import com.Ashly.simpleWebApp.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ProductService {
+
+    @Autowired   //annotation to automatically make connection btw instance of productRepository
+    ProductRepository repo;
+
+    public List<Product> getProducts() {
+        return repo.findAll() ;   //hardcoded values are changed
+    }
+
+    public Product getProductById(int prodId) {
+        return repo.findById(prodId).orElse(null);   // or Else is must else there will be error
+    }
+    public void addProduct(Product prod)
+    {
+        repo.save(prod);   //same for both add and update ..if no such product then it adds new ..or else update
+    }
+
+    public void updateProduct(Product prod) {
+        repo.save(prod);
+    }
+
+    public void deleteProduct(int prodId) {
+        repo.deleteById(prodId);
+    }
+}
+
+**********Product(model)*********
+package com.Ashly.simpleWebApp.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
+
+
+@Component
+@Entity
+@Table(name="products") //same as table name in database
+public class Product {
+
+    @Id      //mention prodId as primary key
+    private int prodId;
+    private String prodName;
+    private int price;
+
+    public int getProdId() {
+        return prodId;
+    }
+
+    public void setProdId(int prodId) {
+        this.prodId = prodId;
+    }
+
+    public String getProdName() {
+        return prodName;
+    }
+
+    public void setProdName(String prodName) {
+        this.prodName = prodName;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+}
+
+________________________________________________BUILDING AN E-COMMERCE WEBSITE_____________________________________________
+
+1.create application.properties..connect to database
+2.Then we have to frame the model...what all should be in the table.
+describe the table coloumns datatype etc..
+***********Model - Product************
+id - primary key
+name- string
+description -string
+price -BigDecimal
+category-string
+releaseDate-date
+available-boolean
+quantity - int
+  if we use lombok then we can use the annotations @Data, @AllArgsConstructor,@NoArgsConstructor then we dont have to write constructors
+
+3. then go to controller and write the api request and also create an autowire to connect to service.
+Write each of the methods in the controller and refer it to the service.
+4.In service create an autowire to connect it to repository.Write same methods in controller here also and refer to repository.While referring we have to use built in methods like repo.findAll(),repo.save() etc..
+5.In the repository write public interface ProductRepository extends JpaRepository<tablename,primary key>...write nothing inside.
