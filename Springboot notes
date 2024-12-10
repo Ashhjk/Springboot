@@ -901,6 +901,11 @@ Write each of the methods in the controller and refer it to the service.
 
 5.while doing an operation if we want to get some custom responses then we can use response entity.
 
+6.
+
+
+
+
 __________________Response entity______________
 
 to send our own status..instead of getting list of products create a response entity.
@@ -931,3 +936,9 @@ to send our own status..instead of getting list of products create a response en
             return new ResponseEntity<>(service.getProductById(prodId),HttpStatus.NOT_FOUND);
     }
 
+
+2. In the navbar we need to add product with image...so we need two urls 
+**adding the product 
+**getting the image
+
+So in the product model we have to create new fields like imageName, imageType and store the data in byte[] format
