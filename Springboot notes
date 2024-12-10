@@ -890,9 +890,44 @@ category-string
 releaseDate-date
 available-boolean
 quantity - int
-  if we use lombok then we can use the annotations @Data, @AllArgsConstructor,@NoArgsConstructor then we dont have to write constructors
+1. if we use lombok then we can use the annotations @Data, @AllArgsConstructor,@NoArgsConstructor then we dont have to write constructors
 
-3. then go to controller and write the api request and also create an autowire to connect to service.
+2.. then go to controller and write the api request and also create an autowire to connect to service.
 Write each of the methods in the controller and refer it to the service.
-4.In service create an autowire to connect it to repository.Write same methods in controller here also and refer to repository.While referring we have to use built in methods like repo.findAll(),repo.save() etc..
-5.In the repository write public interface ProductRepository extends JpaRepository<tablename,primary key>...write nothing inside.
+
+3.In service create an autowire to connect it to repository.Write same methods in controller here also and refer to repository.While referring we have to use built in methods like repo.findAll(),repo.save() etc..
+
+4.In the repository write public interface ProductRepository extends JpaRepository<tablename,primary key>...write nothing inside.
+
+5.while doing an operation if we want to get some custom responses then we can use response entity.
+
+__________________Response entity______________
+
+to send our own status..instead of getting list of products create a response entity.
+***returns response entity of type list products.
+
+@GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+
+        return new ResponseEntity<>()(service.getProducts(),HttpStatus.OK);
+    }
+
+    @GetMapping("/products/{prodId}")
+    public ResponseEntity<Product> getProductById(@PathVariable int prodId){   //here use pathvariable because the  value in url is passed as argument
+        return new ResponseEntity<>()(service.getProductById(prodId), HttpStatus.OK);
+    }
+***Good status code is always 200 series.
+***if product is not null return this..if not found then give else condition.
+
+************if else for response entity************
+
+@GetMapping("/products/{prodId}")
+    public ResponseEntity<Product> getProductById(@PathVariable int prodId){   //here use pathvariable because the  value in url is passed as argument
+
+        Product product = service.getProductById(prodId); //first create object
+        if (product!=null)
+            return new ResponseEntity<>(service.getProductById(prodId),HttpStatus.FOUND);
+        else
+            return new ResponseEntity<>(service.getProductById(prodId),HttpStatus.NOT_FOUND);
+    }
+
