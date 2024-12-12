@@ -901,7 +901,8 @@ Write each of the methods in the controller and refer it to the service.
 
 5.while doing an operation if we want to get some custom responses then we can use response entity.
 
-6.
+6.if we want to change the formatting: use this annotation in the entity
+@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd-mm-yyyy")   //to convert the date to ddmmyyyyformat
 
 
 
@@ -941,4 +942,53 @@ to send our own status..instead of getting list of products create a response en
 **adding the product 
 **getting the image
 
-So in the product model we have to create new fields like imageName, imageType and store the data in byte[] format
+So in the product model we have to create new fields like imageName, imageType and store the data in byte[] format.One way to store the image is we can store the image in cloud server and then give the url .But here we are storing it in database itself.
+
+use annotation @Lob indicates large object
+
+ private String imageName;
+    private String imageType;
+    
+    @Lob //use annotation for storing large object
+    private byte[] imageData;
+
+
+
+*****************TO ADD A PRODUCT WITH IMAGE*****************
+suppose we want to add a new product along with image.
+1.CONTROLLER
+
+Then we need a method called add product in the comtroller.
+if we are simply adding a product without image then its easy for us to write the controller part.
+@POST MAPPING
+public ResponseEntity<>addProduct(@RequestBody Product product)
+
+But as we are using image alsoRequestPart is used. accepts image as MultipartFile and name it as imageFile.
+Also a question mark inside the response entity because we dint know the datatype.
+@PostMapping("/products")
+    public ResponseEntity<?> addProduct(@RequestPart Product prod,
+                                        @RequestPart MultipartFile imageFile)  //part accepts data as multiple parts
+    {
+        try {
+            Product product1 = service.addProduct(prod, imageFile);
+            return new ResponseEntity<>(product1, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+2.SERVICE
+
+In the service layer we have to create an addProduct method .
+But simply repo.save(product) function wont work.  because we have to save both product and image.
+To save an image we have to convert the image into byte format.
+We should know the name of the image.
+We have the product details and the image  we set the name type and convert it into bytes.
+Then  save it to product.
+
+ public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {  //we have the product details and the image  we set the name type and                                                                                                     convert it into bytes.
+        prod.setImageName(imageFile.getOriginalFilename());
+        prod.setImageType(imageFile.getContentType());
+        prod.setImageData(imageFile.getBytes());   //at this point also throw an exception
+        repo.save(prod);
+    }
